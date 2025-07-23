@@ -7,7 +7,6 @@ use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\AuthStatusController;
 
 Route::view('/', 'home');
-Route::view('/simulate', 'simulate');
 
 // OAuth Routes
 Route::get('/auth/google', [GoogleAuthController::class, 'redirect'])->name('google.oauth.redirect');

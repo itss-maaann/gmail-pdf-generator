@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use App\Jobs\GeneratePdfJob;
 use App\Models\PdfGeneration;
 use App\Http\Requests\GeneratePdfRequest;
-use Illuminate\Http\Request;
+use App\Jobs\PdfCleanupJob;
 
 class PdfController extends Controller
 {
@@ -44,10 +44,19 @@ class PdfController extends Controller
     {
         $record = PdfGeneration::findOrFail($id);
 
-        if ($record->status !== 'completed' || !$record->file_path || !file_exists($record->file_path)) {
+        if (
+            $record->status !== 'completed' ||
+            !$record->file_path ||
+            !file_exists($record->file_path)
+        ) {
             return response()->json(['message' => 'PDF not ready or failed.'], 400);
         }
 
-        return response()->download($record->file_path);
+        $filePath = $record->file_path;
+        $filename = basename($filePath);
+
+        PdfCleanupJob::dispatch($record->id)->delay(now()->addSeconds(20));
+
+        return response()->download($filePath, $filename)->deleteFileAfterSend(true);
     }
 }

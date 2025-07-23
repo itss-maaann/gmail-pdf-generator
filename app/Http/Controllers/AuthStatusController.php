@@ -13,21 +13,12 @@ class AuthStatusController extends Controller
     {
         $email = $request->query('email');
 
-        $record = AuthenticatedEmail::where('email', $email)->first();
-
-        if (!$record || empty($record->token)) {
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return response()->json(['authenticated' => false]);
         }
 
         try {
-            $client = $gmailService->getClient([
-                'token' => json_decode($record->token, true),
-                'on_refresh' => function ($newToken) use ($email) {
-                    AuthenticatedEmail::where('email', $email)->update([
-                        'token' => json_encode($newToken)
-                    ]);
-                }
-            ]);
+            $client = $gmailService->getClientForEmail($email);
 
             if ($client->isAccessTokenExpired() && !$client->getRefreshToken()) {
                 AuthenticatedEmail::where('email', $email)->update(['token' => null]);

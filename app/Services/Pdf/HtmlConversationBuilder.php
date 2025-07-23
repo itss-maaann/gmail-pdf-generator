@@ -6,6 +6,9 @@ class HtmlConversationBuilder
 {
     public function build(string $from, string $to, array $emails, string $conversationId): string
     {
+        $startTime = microtime(true);
+        info("🛠️ HTML conversation build started for Conversation ID: {$conversationId}");
+
         $html = "<h1 style='text-align:center;'>Gmail Conversation between {$from} and {$to}</h1><hr>";
 
         foreach ($emails as $email) {
@@ -23,6 +26,8 @@ class HtmlConversationBuilder
                 </div>
             HTML;
         }
+
+        logExecutionStats("✅ HTML conversation build completed for Conversation ID: {$conversationId}", $startTime);
 
         return $html;
     }
