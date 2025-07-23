@@ -35,10 +35,15 @@ return [
 
     'pdf' => [
         'enabled' => true,
-        'binary' => env('WKHTML_PDF_BINARY', 'C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe'),
-        'timeout' => false,
-        'options' => [],
-        'env'     => [],
+        'binary' => env('WKHTML_PDF_BINARY', 'D:/Herd/wkhtmltopdf/wkhtmltopdf.exe'),
+        'options' => [
+            'enable-local-file-access' => true,
+            'margin-top'    => 10,
+            'margin-bottom' => 10,
+            'margin-left'   => 10,
+            'margin-right'  => 10,
+            'encoding' => 'UTF-8',
+        ],
     ],
 
     'image' => [

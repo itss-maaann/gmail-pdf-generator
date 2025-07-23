@@ -33,36 +33,9 @@ class GmailPdfService
             return ($aMatch[2] ?? 0) <=> ($bMatch[2] ?? 0);
         });
 
+        $html = $this->htmlBuilder->build($from, $to, $emails, $conversationId);
+
         $finalFilename = "gmail_conversation_{$conversationId}_" . now()->format('Ymd_His') . ".pdf";
-        $finalPath = storage_path("app/{$finalFilename}");
-
-        $mainPdf = new \Mpdf\Mpdf([
-            'tempDir' => storage_path('app/tmp'),
-            'format' => 'A4',
-            'default_font_size' => 10,
-            'default_font' => 'Arial',
-        ]);
-
-        $chunks = array_chunk($emails, 5);
-        foreach ($chunks as $i => $chunk) {
-            $html = $this->htmlBuilder->build($from, $to, $chunk, "{$conversationId}_chunk{$i}");
-
-            $tempPdfPath = $this->pdfService->generateChunk($html, "chunk_{$conversationId}_{$i}");
-
-            $tempMpdf = new \Mpdf\Mpdf(['tempDir' => storage_path('app/tmp')]);
-            $pages = $tempMpdf->SetSourceFile($tempPdfPath);
-            for ($j = 1; $j <= $pages; $j++) {
-                $tplId = $tempMpdf->ImportPage($j);
-                $mainPdf->AddPage();
-                $mainPdf->UseTemplate($tplId);
-            }
-
-            unlink($tempPdfPath);
-            unset($tempMpdf);
-        }
-
-        $mainPdf->Output($finalPath, \Mpdf\Output\Destination::FILE);
-
-        return $finalPath;
+        return $this->pdfService->generate($html, $finalFilename);
     }
 }

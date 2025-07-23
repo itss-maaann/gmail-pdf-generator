@@ -21,3 +21,8 @@ Route::post('/simulate-conversation', [ConversationController::class, 'simulate'
 Route::post('/generate-pdf', [PdfController::class, 'generate'])->name('generate.pdf');
 Route::get('/check-pdf-status/{id}', [PdfController::class, 'checkPdfStatus']);
 Route::get('/download-pdf/{id}', [PdfController::class, 'downloadPdf']);
+
+
+Route::get('/test-pdf-path', function () {
+    return config('snappy.pdf.binary');
+});
