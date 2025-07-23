@@ -24,7 +24,6 @@ class GeneratePdfJob implements ShouldQueue
 
         try {
             $pdfPath = $gmailPdfService->generateConversationPdf($record->from_email, $record->to_email, $this->jobId);
-            cache()->put("pdf_{$this->jobId}", $pdfPath, now()->addHours(1));
             $record->update([
                 'status' => 'completed',
                 'file_path' => $pdfPath,

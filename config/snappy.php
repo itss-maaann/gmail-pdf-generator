@@ -36,6 +36,7 @@ return [
     'pdf' => [
         'enabled' => true,
         'binary' => env('WKHTML_PDF_BINARY', 'D:/Herd/wkhtmltopdf/wkhtmltopdf.exe'),
+        'timeout' => 600,
         'options' => [
             'enable-local-file-access' => true,
             'margin-top'    => 10,
